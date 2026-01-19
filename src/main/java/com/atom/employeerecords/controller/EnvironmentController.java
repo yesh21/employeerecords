@@ -20,7 +20,7 @@ public class EnvironmentController {
     public ResponseEntity<Map<String, Object>> testEnvironment() {
         Map<String, Object> response = new HashMap<>();
 
-        if (deploymentEnv == null || deploymentEnv.trim().isEmpty() || "unknown".equals(deploymentEnv)) {
+        if (deploymentEnv == null || deploymentEnv.trim().isEmpty()) {
             response.put("status", "error");
             response.put("message", "No environment variable set. Please configure DEPLOYMENT_ENV.");
             return ResponseEntity.ok(response);
