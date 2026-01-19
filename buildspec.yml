@@ -21,9 +21,10 @@ phases:
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Fetching current task definition...
-      - aws ecs describe-task-definition --task-definition employeerecordstaskdef --region ap-south-2 --query 'taskDefinition' > task-def.json
+      - aws ecs describe-task-definition --task-definition employeerecordstaskdef --region ap-south-2 > task-def-full.json
       - echo Updating task definition with new image...
-      - cat task-def.json | jq --arg IMAGE "$REPOSITORY_URI:$IMAGE_TAG" '.containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy, .tags)' > task-definition.json
+      - jq --arg IMAGE "$REPOSITORY_URI:$IMAGE_TAG" '.taskDefinition | .containerDefinitions[0].image = $IMAGE | {family: .family, taskRoleArn: .taskRoleArn, executionRoleArn: .executionRoleArn, networkMode: .networkMode, containerDefinitions: .containerDefinitions, volumes: .volumes, placementConstraints: .placementConstraints, requiresCompatibilities: .requiresCompatibilities, cpu: .cpu, memory: .memory, runtimePlatform: .runtimePlatform}' task-def-full.json > task-definition.json
+      - echo "Generated task-definition.json:"
       - cat task-definition.json
       - echo Writing image definitions file...
       - printf '[{"name":"employeerecordscontainer","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
