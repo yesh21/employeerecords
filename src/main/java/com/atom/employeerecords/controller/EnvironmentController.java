@@ -29,7 +29,7 @@ public class EnvironmentController {
         switch (deploymentEnv.toLowerCase()) {
             case "prod":
                 response.put("environment", "production");
-                response.put("status", "success");
+                response.put("status", "success in pipeline");
                 response.put("message", "Running in PRODUCTION environment");
                 response.put("data", Map.of(
                     "version", "1.0.0",
